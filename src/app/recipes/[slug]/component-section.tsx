@@ -27,6 +27,7 @@ export function ComponentSection({
   title,
   slug,
   scale,
+  parentScaleFactor = 1,
   note,
   ingredients,
   steps,
@@ -35,6 +36,7 @@ export function ComponentSection({
   title: string;
   slug: string;
   scale: number;
+  parentScaleFactor?: number;
   note: string | null;
   ingredients: Ingredient[];
   steps: Step[];
@@ -68,7 +70,7 @@ export function ComponentSection({
             <h4 className="mb-2 font-medium">Ingredients</h4>
             <ul className="space-y-1">
               {ingredients.map((ing) => {
-                const scaled = scaleQuantity(ing.quantity, scale, ing.scalable);
+                const scaled = scaleQuantity(ing.quantity, scale * parentScaleFactor, ing.scalable);
                 return (
                   <li key={ing.id} className="flex items-baseline gap-2">
                     <span className="min-w-[3rem] text-right font-medium">

@@ -39,9 +39,17 @@ export function formatQuantity(value: number | null): string {
     return whole.toString();
   }
 
-  const match = KITCHEN_FRACTIONS.find(([f]) => Math.abs(frac - f) < 0.05);
-  if (match) {
-    return whole > 0 ? `${whole}${match[1]}` : match[1];
+  let closest: [number, string] | undefined;
+  let closestDist = Infinity;
+  for (const entry of KITCHEN_FRACTIONS) {
+    const dist = Math.abs(frac - entry[0]);
+    if (dist < 0.05 && dist < closestDist) {
+      closest = entry;
+      closestDist = dist;
+    }
+  }
+  if (closest) {
+    return whole > 0 ? `${whole}${closest[1]}` : closest[1];
   }
 
   try {

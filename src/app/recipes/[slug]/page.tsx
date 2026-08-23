@@ -18,12 +18,11 @@ import { eq, desc, sql, asc } from "drizzle-orm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ScalingControls } from "./scaling-controls";
 import { NotesList } from "./notes-list";
 import { PhotoGallery } from "./photo-gallery";
-import { ComponentSection } from "./component-section";
 import { VideoSection } from "./video-section";
 import { PhotoUpload } from "./photo-upload";
+import { RecipeContent } from "./recipe-content";
 
 async function getRecipe(slug: string) {
   await requireAuth();
@@ -220,8 +219,8 @@ export default async function RecipePage({
 
       <Separator className="my-6" />
 
-      {/* Scaling + Ingredients */}
-      <ScalingControls
+      {/* Scaling + Ingredients + Components */}
+      <RecipeContent
         baseServings={recipe.baseServings}
         servingNoun={recipe.servingNoun}
         ingredients={recipe.ingredients.map((i) => ({
@@ -233,6 +232,29 @@ export default async function RecipePage({
           prepNote: i.prepNote,
           scalable: i.scalable,
           groupLabel: i.groupLabel,
+        }))}
+        components={recipe.components.map((comp) => ({
+          childRecipeId: comp.childRecipeId,
+          childTitle: comp.childTitle,
+          childSlug: comp.childSlug,
+          scale: parseFloat(comp.scale),
+          note: comp.note,
+          ingredients: comp.ingredients.map((i) => ({
+            id: i.id,
+            rawText: i.rawText,
+            quantity: i.quantity ? parseFloat(i.quantity) : null,
+            unit: i.unit,
+            item: i.item,
+            prepNote: i.prepNote,
+            scalable: i.scalable,
+            groupLabel: i.groupLabel,
+          })),
+          steps: comp.steps.map((s) => ({
+            id: s.id,
+            text: s.text,
+            durationSeconds: s.durationSeconds,
+            isPassive: s.isPassive,
+          })),
         }))}
       />
 
@@ -265,42 +287,6 @@ export default async function RecipePage({
           ))}
         </ol>
       </section>
-
-      {/* Components */}
-      {recipe.components.length > 0 && (
-        <>
-          <Separator className="my-6" />
-          <section className="mb-8">
-            <h2 className="mb-4 text-2xl font-semibold">Components</h2>
-            {recipe.components.map((comp) => (
-              <ComponentSection
-                key={comp.childRecipeId}
-                title={comp.childTitle}
-                slug={comp.childSlug}
-                scale={parseFloat(comp.scale)}
-                note={comp.note}
-                ingredients={comp.ingredients.map((i) => ({
-                  id: i.id,
-                  rawText: i.rawText,
-                  quantity: i.quantity ? parseFloat(i.quantity) : null,
-                  unit: i.unit,
-                  item: i.item,
-                  prepNote: i.prepNote,
-                  scalable: i.scalable,
-                  groupLabel: i.groupLabel,
-                }))}
-                steps={comp.steps.map((s) => ({
-                  id: s.id,
-                  text: s.text,
-                  durationSeconds: s.durationSeconds,
-                  isPassive: s.isPassive,
-                }))}
-                baseServings={recipe.baseServings}
-              />
-            ))}
-          </section>
-        </>
-      )}
 
       {/* Videos */}
       {recipe.videos.length > 0 && (

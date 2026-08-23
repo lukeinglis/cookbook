@@ -22,16 +22,19 @@ export function ScalingControls({
   baseServings,
   servingNoun,
   ingredients,
+  factor,
+  onFactorChange,
 }: {
   baseServings: number;
   servingNoun: string;
   ingredients: Ingredient[];
+  factor: number;
+  onFactorChange: (f: number) => void;
 }) {
-  const [factor, setFactor] = useState(1);
   const [targetInput, setTargetInput] = useState(baseServings.toString());
 
   function handlePreset(f: number) {
-    setFactor(f);
+    onFactorChange(f);
     setTargetInput(Math.round(baseServings * f).toString());
   }
 
@@ -39,7 +42,7 @@ export function ScalingControls({
     setTargetInput(val);
     const n = parseInt(val);
     if (n > 0) {
-      setFactor(n / baseServings);
+      onFactorChange(n / baseServings);
     }
   }
 

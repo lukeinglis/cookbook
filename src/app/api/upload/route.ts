@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { put } from "@vercel/blob";
+import { verifySession } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
+  const isAuthenticated = await verifySession();
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const formData = await request.formData();
   const file = formData.get("file") as File | null;
   const thumb = formData.get("thumb") as File | null;

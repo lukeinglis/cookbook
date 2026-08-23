@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { verifySession } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  const isAuthenticated = await verifySession();
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const url = request.nextUrl.searchParams.get("url");
   if (!url) {
     return NextResponse.json({ error: "url parameter required" }, { status: 400 });

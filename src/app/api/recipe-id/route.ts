@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { recipes } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
+import { verifySession } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
+  const isAuthenticated = await verifySession();
+  if (!isAuthenticated) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const slug = request.nextUrl.searchParams.get("slug");
   if (!slug) {
     return NextResponse.json({ error: "slug required" }, { status: 400 });
