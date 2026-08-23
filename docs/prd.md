@@ -22,13 +22,13 @@ The cookbook layer must be complete and populated before the tooling layer is wo
 
 ## Requirements: cookbook
 
-**Capture.** Three paths, all landing on the same review screen before anything saves.
+**Capture.** Three entry paths.
 
-1. Photo of a handwritten card. VLM extraction into the structured schema. The photo is kept as permanent provenance (`source_card`).
-2. URL. Prefer JSON-LD recipe schema when the page publishes it, fall back to VLM extraction on the page text. Also accept a screenshot of a recipe page, which routes through the photo path.
-3. Manual entry. Empty form, same fields.
+1. Photo of a handwritten card. VLM extraction into the structured schema. The photo is kept as permanent provenance (`source_card`). Lands on the review screen before saving.
+2. URL. Prefer JSON-LD recipe schema when the page publishes it, fall back to VLM extraction on the page text. Also accept a screenshot of a recipe page, which routes through the photo path. Lands on the review screen before saving.
+3. Manual entry. A direct form for the same fields. No review screen, since there is no extraction output to correct.
 
-**Review screen.** Every path goes through it. Assume extraction is wrong. Source photo or page text shown alongside parsed fields. Every ingredient shows `raw_text` and its parsed pieces, both editable. Ingredients that fail to parse are visually flagged without blocking save. Nothing writes to the database until confirmed.
+**Review screen.** For extraction paths (photo and URL) only. Assume extraction is wrong. Source photo or page text shown alongside parsed fields. Every ingredient shows `raw_text` and its parsed pieces, both editable. Ingredients that fail to parse are visually flagged without blocking save. Nothing writes to the database until confirmed.
 
 **Provenance.** Original card photos are permanent and survive recipe edits. Imported recipes track their source URL and original title.
 
@@ -46,7 +46,7 @@ The cookbook layer must be complete and populated before the tooling layer is wo
 
 **Search.** Full-text across title, ingredients, and notes.
 
-See [docs/schema.md](schema.md) for the full data model.
+See [docs/schema.md](./schema.md) for the full data model.
 
 ## Requirements: tooling
 
