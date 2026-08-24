@@ -1,44 +1,36 @@
-# cookbook
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-Personal digital cookbook at `cooking.lukeinglis.me`. Single user, single password gate, phones and iPads as the primary clients.
+## Getting Started
 
-Two layers: the cookbook (every recipe in one place, editable from a phone, with dated notes tracking how each dish changes over time) and the tooling (cook mode, grocery lists, meal timeline). The cookbook layer ships first.
-
-## Stack
-
-- Next.js on Vercel
-- Vercel Postgres
-- Vercel Blob (images)
-- Password gate via middleware: shared password from env var, HttpOnly session cookie, every route behind it
-
-## Docs
-
-- [Product spec](docs/prd.md)
-- [Schema](docs/schema.md)
-
-## Local setup
+First, run the development server:
 
 ```bash
-git clone https://github.com/lukeinglis/cookbook.git
-cd cookbook
-npm install
-```
-
-### Required env vars
-
-| Variable | Purpose |
-| --- | --- |
-| `POSTGRES_URL` | Vercel Postgres connection string |
-| `POSTGRES_URL_NON_POOLING` | Direct connection for migrations |
-| `BLOB_READ_WRITE_TOKEN` | Vercel Blob access |
-| `SITE_PASSWORD` | The shared password for the middleware gate |
-
-```bash
-cp .env.example .env.local
-# fill in the values above
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Deployment
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Vercel, matching the conventions of the other `*.lukeinglis.me` subdomains. Push to `main` deploys to production.
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
