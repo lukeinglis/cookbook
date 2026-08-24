@@ -7,31 +7,9 @@ import { recipeFormSchema, type RecipeFormData } from "@/lib/recipe-schema";
 import { slugify } from "@/lib/slugify";
 import { normalizeUnit } from "@/lib/taxonomy";
 import { logger } from "@/lib/logger";
+import { parseFractionQuantity } from "@/lib/parse-fraction";
+import { buildRawText, extractYouTubeVideoId } from "@/lib/recipe-utils";
 import { eq, and, ne } from "drizzle-orm";
-
-function parseFractionQuantity(s: string): number | null {
-  if (!s || !s.trim()) return null;
-  const trimmed = s.trim();
-  const mixedMatch = trimmed.match(/^(\d+)\s+(\d+)\/(\d+)$/);
-  if (mixedMatch) return parseInt(mixedMatch[1]) + parseInt(mixedMatch[2]) / parseInt(mixedMatch[3]);
-  const fracMatch = trimmed.match(/^(\d+)\/(\d+)$/);
-  if (fracMatch) return parseInt(fracMatch[1]) / parseInt(fracMatch[2]);
-  const num = parseFloat(trimmed);
-  return isNaN(num) ? null : num;
-}
-
-function buildRawText(qty: string, unit: string, item: string, prepNote: string): string {
-  const parts = [qty, unit, item].filter(Boolean).join(" ");
-  return prepNote ? `${parts}, ${prepNote}` : parts || "—";
-}
-
-function extractYouTubeVideoId(url: string): string {
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) return u.pathname.slice(1);
-    return u.searchParams.get("v") || "";
-  } catch { return ""; }
-}
 
 export async function updateRecipe(
   recipeId: string,
@@ -80,13 +58,15 @@ export async function updateRecipe(
 
     // Replace ingredients
     await db.delete(ingredients).where(eq(ingredients.recipeId, recipeId));
-    const validIngredients = d.ingredients.filter((i) => i.item || i.quantity);
+    const validIngredients = d.ingredients
+      .map((ing) => ({ ...ing, rawText: buildRawText(ing.quantity, ing.unit, ing.item, ing.prepNote) }))
+      .filter((ing) => ing.rawText.trim());
     if (validIngredients.length > 0) {
       await db.insert(ingredients).values(
         validIngredients.map((ing, idx) => ({
           recipeId,
           position: idx,
-          rawText: buildRawText(ing.quantity, ing.unit, ing.item, ing.prepNote),
+          rawText: ing.rawText,
           quantity: parseFractionQuantity(ing.quantity)?.toString() ?? null,
           unit: normalizeUnit(ing.unit),
           item: ing.item || null,
